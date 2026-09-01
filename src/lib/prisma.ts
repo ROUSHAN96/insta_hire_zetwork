@@ -9,7 +9,7 @@ const globalForPrisma = global as unknown as {
 
 const adapter =
   globalForPrisma.adapter ||
-  new PrismaPg({ connectionString: process.env.DATABASE_URL });
+  new PrismaPg({ connectionString: process.env.DIRECT_URL });
 
 export const prisma =
   globalForPrisma.prisma ||
