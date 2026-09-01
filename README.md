@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InstaHire - Production-Grade Next.js 16 Starter
 
-## Getting Started
+A robust, enterprise-ready template built with **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, **Vitest**, and **Playwright**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Tech Stack & Features
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (Turbopack, App Router under `src/app`)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict mode, path aliases `@/*`)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (Base UI primitives + Lucide icons)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + `clsx` + `tailwind-merge`
+- **Validation**: [Zod](https://zod.dev/) for type-safe environment schemas and API contracts
+- **Unit & Component Testing**: [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/) + Happy-DOM
+- **E2E Testing**: [Playwright](https://playwright.dev/) with automated web server lifecycle
+- **Linting & Formatting**: [ESLint](https://eslint.org/) (Next.js config) + [Prettier](https://prettier.io/) + `prettier-plugin-tailwindcss`
+- **Git Hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/lint-staged/lint-staged)
+- **CI / CD**: GitHub Actions workflow for linting, typechecking, tests, and production build
+
+---
+
+## 📁 Directory Architecture
+
+```
+insta_hire_zetwork/
+├── .github/
+│   └── workflows/
+│       └── ci.yml               # Automated CI pipeline
+├── e2e/                         # Playwright End-to-End tests
+│   ├── health.spec.ts           # Health API integration test
+│   └── home.spec.ts             # Page rendering and user interaction tests
+├── public/                      # Static assets
+├── src/
+│   ├── app/                     # Next.js App Router
+│   │   ├── api/                 # API route handlers
+│   │   │   └── health/route.ts  # Health check endpoint
+│   │   ├── error.tsx            # App-level error boundary
+│   │   ├── global-error.tsx     # Root error boundary
+│   │   ├── layout.tsx           # Global Root layout
+│   │   ├── loading.tsx          # Loading state indicator
+│   │   ├── not-found.tsx        # Custom 404 page
+│   │   └── page.tsx             # Interactive landing page demo
+│   ├── components/              # UI Components
+│   │   ├── common/              # Shared layout widgets (Header, Footer)
+│   │   ├── feedback/            # Feedback indicators (LoadingSpinner, EmptyState)
+│   │   └── ui/                  # shadcn/ui design tokens & primitives
+│   ├── config/                  # App configuration & validated schemas
+│   │   ├── env.ts               # Type-safe Zod environment validation
+│   │   └── site.ts              # Site metadata and navigation constants
+│   ├── hooks/                   # Custom reusable typed hooks
+│   │   ├── use-debounce.ts      # Debounce state hook
+│   │   ├── use-local-storage.ts # LocalStorage sync hook
+│   │   └── use-media-query.ts   # useSyncExternalStore responsive hook
+│   ├── lib/                     # Utilities & library helpers
+│   │   ├── fetcher.ts           # Resilient HTTP fetcher with custom FetchError
+│   │   └── utils.ts             # `cn` helper (clsx + tailwind-merge)
+│   ├── styles/
+│   │   └── globals.css          # Tailwind CSS tokens and themes
+│   └── types/                   # Shared TypeScript interfaces & API models
+│       └── index.ts
+├── tests/                       # Vitest setup & helpers
+│   ├── setup.ts                 # Jest-DOM matchers and window mocks
+│   └── test-utils.tsx           # Custom React Testing Library render wrapper
+├── .env.example                 # Documented environment template
+├── .lintstagedrc.json           # Pre-commit staged linters
+├── .prettierrc                  # Prettier config
+├── components.json              # shadcn/ui configuration
+├── next.config.ts               # Typed Next.js configuration
+├── package.json                 # Dependency manifests & NPM scripts
+├── playwright.config.ts         # Playwright E2E configuration
+├── tsconfig.json                # Strict TypeScript configuration
+└── vitest.config.mts            # Vitest runner configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Prerequisites
+- **Node.js**: `v20+` (v22 recommended)
+- **Package Manager**: `pnpm` (v10 recommended)
 
-## Learn More
+### 2. Installation
+```bash
+# Clone the repository
+git clone <repository-url>
+cd insta_hire_zetwork
 
-To learn more about Next.js, take a look at the following resources:
+# Install dependencies
+pnpm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Environment Setup
+```bash
+cp .env.example .env.local
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Run Development Server
+```bash
+pnpm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Available Scripts & Testing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Command | Description |
+| :--- | :--- |
+| `pnpm run dev` | Start development server with Turbopack |
+| `pnpm run build` | Create optimized production build |
+| `pnpm run start` | Start production server |
+| `pnpm run typecheck` | Run TypeScript compiler validation (`tsc --noEmit`) |
+| `pnpm run lint` | Run ESLint checks |
+| `pnpm run lint:fix` | Automatically fix ESLint warnings |
+| `pnpm run format` | Format code using Prettier with Tailwind class ordering |
+| `pnpm run test` | Run Unit & Component tests with Vitest |
+| `pnpm run test:watch` | Run Vitest in interactive watch mode |
+| `pnpm run test:coverage` | Generate code coverage report |
+| `pnpm run test:e2e` | Run Playwright End-to-End test suite |
+| `pnpm run test:e2e:ui` | Open interactive Playwright Test UI |
+
+---
+
+## 🔒 Quality & CI Pipeline
+
+Every pull request and push to main runs our GitHub Actions workflow:
+1. **ESLint**: Static analysis & lint rules
+2. **TypeScript**: Strict typecheck
+3. **Vitest**: Unit & Component tests
+4. **Next.js Build**: Turbopack production compilation
