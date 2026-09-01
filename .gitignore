@@ -54,3 +54,4 @@ Thumbs.db
 
 # Vercel & Deployment
 .vercel
+/src/generated

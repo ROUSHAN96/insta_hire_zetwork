@@ -1,0 +1,134 @@
+[
+  {
+    "id": "prod_001",
+    "name": "Wireless Noise-Canceling Headphones",
+    "slug": "wireless-noise-canceling-headphones",
+    "category": "Electronics",
+    "price": 299900,
+    "stock": 45,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop&auto=format",
+    "description": "Premium over-ear headphones with active noise cancellation, 30-hour battery life, and crystal-clear audio. Features Bluetooth 5.3 and multi-device connectivity."
+  },
+  {
+    "id": "prod_002",
+    "name": "Mechanical Keyboard RGB",
+    "slug": "mechanical-keyboard-rgb",
+    "category": "Electronics",
+    "price": 449900,
+    "stock": 30,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&h=600&fit=crop&auto=format",
+    "description": "Cherry MX switches with per-key RGB backlighting. Full aluminum body, USB-C, detachable cable, programmable macros."
+  },
+  {
+    "id": "prod_003",
+    "name": "4K Ultra HD Monitor 27\"",
+    "slug": "4k-ultra-hd-monitor",
+    "category": "Electronics",
+    "price": 2499900,
+    "stock": 15,
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&h=600&fit=crop&auto=format",
+    "description": "27-inch 4K IPS display with HDR10, 144Hz refresh rate, 1ms response time. Perfect for creative professionals and gamers."
+  },
+  {
+    "id": "prod_004",
+    "name": "USB-C Hub Adapter 7-in-1",
+    "slug": "usb-c-hub-adapter",
+    "category": "Electronics",
+    "price": 149900,
+    "stock": 100,
+    "rating": 4.3,
+    "image": "https://images.unsplash.com/photo-1625842268584-8f3296236761?w=600&h=600&fit=crop&auto=format",
+    "description": "Expand your connectivity with HDMI 4K, 3x USB 3.0, SD/MicroSD readers, and 100W PD charging pass-through."
+  },
+  {
+    "id": "prod_005",
+    "name": "Premium Cotton T-Shirt",
+    "slug": "premium-cotton-tshirt",
+    "category": "Clothing",
+    "price": 69900,
+    "stock": 200,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop&auto=format",
+    "description": "Ultra-soft 100% organic cotton t-shirt. Pre-shrunk, breathable fabric with reinforced stitching for lasting comfort."
+  },
+  {
+    "id": "prod_006",
+    "name": "Slim Fit Denim Jeans",
+    "slug": "slim-fit-denim-jeans",
+    "category": "Clothing",
+    "price": 179900,
+    "stock": 75,
+    "rating": 4.2,
+    "image": "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&h=600&fit=crop&auto=format",
+    "description": "Classic slim fit jeans in premium stretch denim. Features a modern tapered leg, five-pocket design, and comfortable mid-rise waist."
+  },
+  {
+    "id": "prod_007",
+    "name": "Running Sneakers Pro",
+    "slug": "running-sneakers-pro",
+    "category": "Clothing",
+    "price": 349900,
+    "stock": 50,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop&auto=format",
+    "description": "Lightweight performance running shoes with responsive cushioning, breathable mesh upper, and durable rubber outsole."
+  },
+  {
+    "id": "prod_008",
+    "name": "Classic Leather Wallet",
+    "slug": "classic-leather-wallet",
+    "category": "Clothing",
+    "price": 89900,
+    "stock": 120,
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1627123424574-724758594e93?w=600&h=600&fit=crop&auto=format",
+    "description": "Handcrafted genuine leather bifold wallet with RFID blocking, 8 card slots, 2 bill compartments, and a coin pocket."
+  },
+  {
+    "id": "prod_009",
+    "name": "The Art of Programming",
+    "slug": "the-art-of-programming",
+    "category": "Books",
+    "price": 79900,
+    "stock": 60,
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=600&h=600&fit=crop&auto=format",
+    "description": "A comprehensive guide to software craftsmanship covering clean code, design patterns, testing strategies, and architectural best practices."
+  },
+  {
+    "id": "prod_010",
+    "name": "Design Patterns Handbook",
+    "slug": "design-patterns-handbook",
+    "category": "Books",
+    "price": 64900,
+    "stock": 40,
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&h=600&fit=crop&auto=format",
+    "description": "Master the 23 Gang of Four patterns with modern TypeScript examples. Includes real-world case studies and refactoring techniques."
+  },
+  {
+    "id": "prod_011",
+    "name": "Stainless Steel Water Bottle",
+    "slug": "stainless-steel-water-bottle",
+    "category": "Home & Kitchen",
+    "price": 49900,
+    "stock": 150,
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&h=600&fit=crop&auto=format",
+    "description": "Double-wall vacuum insulated 750ml bottle. Keeps drinks cold 24h or hot 12h. BPA-free, leak-proof lid, fits standard cup holders."
+  },
+  {
+    "id": "prod_012",
+    "name": "Bamboo Cutting Board Set",
+    "slug": "bamboo-cutting-board-set",
+    "category": "Home & Kitchen",
+    "price": 99900,
+    "stock": 80,
+    "rating": 4.4,
+    "image": "https://images.unsplash.com/photo-1588165171080-c89acfa5ee83?w=600&h=600&fit=crop&auto=format",
+    "description": "Set of 3 organic bamboo cutting boards in small, medium, and large sizes. Antimicrobial surface, juice grooves, easy-grip handles."
+  }
+]

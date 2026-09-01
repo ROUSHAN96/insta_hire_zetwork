@@ -1,46 +1,60 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Home Page", () => {
-  test("loads landing page and renders heading and buttons", async ({ page }) => {
+test.describe("Home Page & Product Browsing", () => {
+  test("loads landing page and renders product catalog", async ({ page }) => {
     await page.goto("/");
 
     // Verify main heading
-    await expect(page.locator("h1")).toContainText("Next.js 16");
+    await expect(page.locator("h1")).toContainText("Our Products");
+    await expect(page.getByText("Browse our curated collection of premium products")).toBeVisible();
 
-    // Verify CTA button
-    const demoButton = page.getByRole("link", { name: /try live interactive demo/i });
-    await expect(demoButton).toBeVisible();
-  });
-
-  test("renders TanStack Query demo and refetches data", async ({ page }) => {
-    await page.goto("/");
-
-    // Verify Query tab is active by default
-    await expect(page.getByText("Live Server State (TanStack Query)")).toBeVisible();
-    await expect(page.getByText("GET /api/health")).toBeVisible();
-
-    // Click Refetch Query button
-    const refetchButton = page.getByRole("button", { name: /refetch query/i });
-    await expect(refetchButton).toBeVisible();
-    await refetchButton.click();
-  });
-
-  test("switches tabs and filters candidate list using search input", async ({ page }) => {
-    await page.goto("/");
-
-    // Switch to Candidate Search tab
-    const candidateTab = page.getByRole("tab", { name: /candidate search demo/i });
-    await candidateTab.click();
-
-    // Find search input in candidate explorer
-    const searchInput = page.getByPlaceholder("Search by candidate name, role, or technology...");
+    // Verify search bar is visible
+    const searchInput = page.getByPlaceholder("Search products...");
     await expect(searchInput).toBeVisible();
 
-    // Type query
-    await searchInput.fill("Sarah");
+    // Verify category filters exist
+    await expect(page.getByRole("button", { name: "All", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Electronics" })).toBeVisible();
+  });
 
-    // Check filtered candidate visible
-    await expect(page.getByText("Sarah Chen")).toBeVisible();
-    await expect(page.getByText("David Kim")).not.toBeVisible();
+  test("filters products by category", async ({ page }) => {
+    await page.goto("/");
+
+    // Click on 'Electronics' category filter
+    const electronicsBtn = page.getByRole("button", { name: "Electronics" });
+    await expect(electronicsBtn).toBeVisible();
+    await electronicsBtn.click();
+
+    // Verify electronics products are displayed
+    await expect(page.getByText("Wireless Noise-Canceling Headphones")).toBeVisible();
+    await expect(page.getByText("Mechanical Keyboard RGB")).toBeVisible();
+  });
+
+  test("filters products using search input", async ({ page }) => {
+    await page.goto("/");
+
+    // Find search input
+    const searchInput = page.getByPlaceholder("Search products...");
+    await expect(searchInput).toBeVisible();
+
+    // Search for 'Headphones'
+    await searchInput.fill("Headphones");
+
+    // Verify search result
+    await expect(page.getByText("Wireless Noise-Canceling Headphones")).toBeVisible();
+  });
+
+  test("navigates to product detail page", async ({ page }) => {
+    await page.goto("/");
+
+    // Find and click a product
+    const productLink = page.getByRole("link", { name: /Wireless Noise-Canceling Headphones/i }).first();
+    await expect(productLink).toBeVisible();
+    await productLink.click();
+
+    // Verify we navigated to the product detail page
+    await expect(page).toHaveURL(/.*\/products\/.+/);
+    await expect(page.locator("h1")).toContainText("Wireless Noise-Canceling Headphones");
+    await expect(page.getByRole("button", { name: /add to cart/i })).toBeVisible();
   });
 });

@@ -1,32 +1,21 @@
-export interface NavItem {
-  title: string;
-  href: string;
-  disabled?: boolean;
-  external?: boolean;
-}
-
 export const siteConfig = {
-  name: "InstaHire",
+  name: 'ShopZet',
   description:
-    "Production-grade Next.js starter with TypeScript, Tailwind CSS, Vitest, React Testing Library, and Playwright.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-  ogImage: "https://og-image.vercel.app/InstaHire.png",
+    'Premium e-commerce store with curated products across Electronics, Clothing, Books, and Home & Kitchen.',
+  url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  ogImage: 'https://og-image.vercel.app/ShopZet.png',
   mainNav: [
     {
-      title: "Home",
-      href: "/",
+      title: 'Home',
+      href: '/',
     },
     {
-      title: "Features",
-      href: "/#features",
+      title: 'Cart',
+      href: '/cart',
     },
-    {
-      title: "Docs",
-      href: "/#docs",
-    },
-  ] as NavItem[],
+  ],
   links: {
-    github: "https://github.com",
-    twitter: "https://twitter.com",
+    twitter: 'https://twitter.com/zetwork',
+    github: 'https://github.com/zetwork',
   },
 };

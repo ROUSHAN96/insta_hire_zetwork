@@ -35,3 +35,7 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export * from './product';
+export * from './cart';
+export * from './order';

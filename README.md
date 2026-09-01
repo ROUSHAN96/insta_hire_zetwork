@@ -1,131 +1,215 @@
-# InstaHire - Production-Grade Next.js 16 Starter
+# 🛒 ShopZet — Production-Grade E-Commerce Cart & Checkout System
 
-A robust, enterprise-ready template built with **Next.js 16**, **React 19**, **TypeScript**, **Tailwind CSS v4**, **shadcn/ui**, **Vitest**, and **Playwright**.
-
----
-
-## 🚀 Tech Stack & Features
-
-- **Framework**: [Next.js 16](https://nextjs.org/) (Turbopack, App Router under `src/app`)
-- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict mode, path aliases `@/*`)
-- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (Base UI primitives + Lucide icons)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) + `clsx` + `tailwind-merge`
-- **Validation**: [Zod](https://zod.dev/) for type-safe environment schemas and API contracts
-- **Unit & Component Testing**: [Vitest](https://vitest.dev/) + [React Testing Library](https://testing-library.com/) + Happy-DOM
-- **E2E Testing**: [Playwright](https://playwright.dev/) with automated web server lifecycle
-- **Linting & Formatting**: [ESLint](https://eslint.org/) (Next.js config) + [Prettier](https://prettier.io/) + `prettier-plugin-tailwindcss`
-- **Git Hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/lint-staged/lint-staged)
-- **CI / CD**: GitHub Actions workflow for linting, typechecking, tests, and production build
+A production-grade, full-featured e-commerce shopping cart and checkout web application built with **Next.js 16 (App Router)**, **React 19**, **TypeScript (Strict Mode)**, **Tailwind CSS v4**, and **shadcn/ui**.
 
 ---
 
-## 📁 Directory Architecture
+## 🌟 Features
+
+1. **Product Catalog & Details**
+   - Responsive product grid with category pills and debounced real-time search.
+   - Dynamic product detail pages (`/products/[slug]`) generated at build-time (SSG) with `generateStaticParams`.
+   - Star ratings, stock inventory indicators, and quick-add controls with optimistic feedback.
+
+2. **Cart Management**
+   - Global reactive cart state via React Context + custom `useCart` facade hook.
+   - Add to cart, update quantity (with stock and max-limit boundaries), remove items, and clear cart.
+   - Persistent across page reloads and browser sessions using `localStorage`.
+   - Real-time cart badge in header reflecting total item count.
+
+3. **Dynamic Cart Calculations**
+   - Dynamic line-item subtotal and overall order calculation stored in integer cents to eliminate floating-point rounding errors.
+   - Automatic free shipping threshold evaluation (e.g. Free shipping on orders over ₹999).
+
+4. **Type-Safe Checkout Form**
+   - Comprehensive two-step checkout form covering Contact Information and Shipping Address.
+   - End-to-end schema validation powered by **Zod** with real-time, inline field errors.
+   - Order summary sidebar displaying items, unit costs, shipping, and grand total.
+
+5. **Order Confirmation & Summary**
+   - Dedicated order confirmation page (`/order-confirmation/[id]`) with celebratory state, full receipt breakdown, shipping address, and unique order ID.
+
+6. **Out of Scope**
+   - Payment handling (payment gateway integration).
+
+---
+
+## 🏛️ Architectural Patterns & SOLID Principles
 
 ```
-insta_hire_zetwork/
-├── .github/
-│   └── workflows/
-│       └── ci.yml               # Automated CI pipeline
-├── e2e/                         # Playwright End-to-End tests
-│   ├── health.spec.ts           # Health API integration test
-│   └── home.spec.ts             # Page rendering and user interaction tests
-├── public/                      # Static assets
-├── src/
-│   ├── app/                     # Next.js App Router
-│   │   ├── api/                 # API route handlers
-│   │   │   └── health/route.ts  # Health check endpoint
-│   │   ├── error.tsx            # App-level error boundary
-│   │   ├── global-error.tsx     # Root error boundary
-│   │   ├── layout.tsx           # Global Root layout
-│   │   ├── loading.tsx          # Loading state indicator
-│   │   ├── not-found.tsx        # Custom 404 page
-│   │   └── page.tsx             # Interactive landing page demo
-│   ├── components/              # UI Components
-│   │   ├── common/              # Shared layout widgets (Header, Footer)
-│   │   ├── feedback/            # Feedback indicators (LoadingSpinner, EmptyState)
-│   │   └── ui/                  # shadcn/ui design tokens & primitives
-│   ├── config/                  # App configuration & validated schemas
-│   │   ├── env.ts               # Type-safe Zod environment validation
-│   │   └── site.ts              # Site metadata and navigation constants
-│   ├── hooks/                   # Custom reusable typed hooks
-│   │   ├── use-debounce.ts      # Debounce state hook
-│   │   ├── use-local-storage.ts # LocalStorage sync hook
-│   │   └── use-media-query.ts   # useSyncExternalStore responsive hook
-│   ├── lib/                     # Utilities & library helpers
-│   │   ├── fetcher.ts           # Resilient HTTP fetcher with custom FetchError
-│   │   └── utils.ts             # `cn` helper (clsx + tailwind-merge)
-│   ├── styles/
-│   │   └── globals.css          # Tailwind CSS tokens and themes
-│   └── types/                   # Shared TypeScript interfaces & API models
-│       └── index.ts
-├── tests/                       # Vitest setup & helpers
-│   ├── setup.ts                 # Jest-DOM matchers and window mocks
-│   └── test-utils.tsx           # Custom React Testing Library render wrapper
-├── .env.example                 # Documented environment template
-├── .lintstagedrc.json           # Pre-commit staged linters
-├── .prettierrc                  # Prettier config
-├── components.json              # shadcn/ui configuration
-├── next.config.ts               # Typed Next.js configuration
-├── package.json                 # Dependency manifests & NPM scripts
-├── playwright.config.ts         # Playwright E2E configuration
-├── tsconfig.json                # Strict TypeScript configuration
-└── vitest.config.mts            # Vitest runner configuration
+┌─────────────────────────────────────────────────────────────┐
+│                      Presentation Layer                     │
+│  - App Router Pages (Server Components by default)         │
+│  - Interactive Client Components ('use client' boundaries) │
+└──────────────┬───────────────────────────────┬──────────────┘
+               │                               │
+┌──────────────▼──────────────┐ ┌──────────────▼──────────────┐
+│       State Management      │ │          Data Layer         │
+│  - CartContext + Provider   │ │  - ProductRepository       │
+│  - useCart (Facade Hook)    │ │  - OrderRepository         │
+│  - LocalStorage Strategy    │ │  - In-Memory / JSON DB     │
+└──────────────┬──────────────┘ └──────────────┬──────────────┘
+               │                               │
+┌──────────────▼───────────────────────────────▼──────────────┐
+│                    Cross-Cutting & Domain                   │
+│  - Zod Schemas (Product, Order, Checkout)                   │
+│  - Type-safe Formatters & Constants (Cents-based currency)  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+| Pattern / Principle | Implementation in ShopZet |
+|---|---|
+| **Single Responsibility (SRP)** | Data repositories handle storage, contexts handle state synchronization, components render UI, and formatters handle data presentation. |
+| **Open/Closed (OCP)** | The `ProductRepository` and `OrderRepository` abstractions allow swapping in-memory data with PostgreSQL/Prisma or MongoDB without touching UI components. |
+| **Liskov Substitution (LSP)** | Consistent domain interfaces (`Product`, `CartItem`, `Order`) ensure seamless composition across layers. |
+| **Interface Segregation (ISP)** | Clean, focused types for `CustomerInfo`, `ShippingAddress`, and `CartItem` rather than bloated all-in-one objects. |
+| **Dependency Inversion (DIP)** | Components and API routes depend on repository abstractions rather than direct file I/O or concrete storage mechanisms. |
+| **Repository Pattern** | `productRepository` and `orderRepository` encapsulate all data querying and persistence. |
+| **Facade Pattern** | `useCart()` hook provides a simplified, ergonomic API concealing internal storage synchronization and reducer logic. |
+| **DRY Principle** | Reusable price formatting (`formatPrice`), date formatting (`formatDate`), debouncing (`useDebounce`), and shared Zod schemas between client and API routes. |
+
+---
+
+## 📁 Directory Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── orders/
+│   │   │   ├── [id]/route.ts       # GET order by ID
+│   │   │   └── route.ts            # POST create order
+│   │   └── products/
+│   │       ├── [id]/route.ts       # GET product by ID
+│   │       └── route.ts            # GET all products (filter/search)
+│   ├── cart/
+│   │   └── page.tsx                # Shopping cart page
+│   ├── checkout/
+│   │   └── page.tsx                # Checkout form & order review
+│   ├── order-confirmation/
+│   │   └── [id]/
+│   │       ├── loading.tsx         # Confirmation skeleton loader
+│   │       └── page.tsx            # Order confirmation receipt
+│   ├── products/
+│   │   └── [slug]/
+│   │       ├── loading.tsx         # Product detail skeleton loader
+│   │       └── page.tsx            # SSG product detail page
+│   ├── globals.css                 # Tailwind v4 styles & theme tokens
+│   ├── layout.tsx                  # Root layout (Header, Providers, Footer)
+│   ├── not-found.tsx               # Custom 404 page
+│   └── page.tsx                    # Product catalog & home page
+├── components/
+│   ├── cart/
+│   │   ├── cart-icon.tsx           # Reactive cart header button + badge
+│   │   ├── cart-item-row.tsx       # Individual cart line item with controls
+│   │   └── cart-summary.tsx        # Subtotal, shipping threshold & CTA
+│   ├── checkout/
+│   │   ├── checkout-form.tsx       # Zod-validated customer & shipping form
+│   │   └── order-summary-card.tsx  # Checkout sidebar summary
+│   ├── common/
+│   │   ├── footer.tsx              # Store footer
+│   │   └── header.tsx              # Sticky header with navigation & cart
+│   ├── feedback/
+│   │   ├── empty-state.tsx         # Empty state widget
+│   │   └── loading-spinner.tsx     # Animated spinner
+│   ├── product/
+│   │   ├── add-to-cart-button.tsx  # Quantity bounded add-to-cart button
+│   │   ├── category-filter.tsx     # Horizontal category filter pills
+│   │   ├── product-card.tsx        # Product card with image, rating, badge
+│   │   ├── product-listing.tsx     # Client filtering & search controller
+│   │   └── search-bar.tsx          # Debounced search input
+│   └── ui/                         # shadcn/ui design primitives
+├── config/
+│   ├── env.ts                      # Validated environment variables
+│   └── site.ts                     # Store metadata & navigation config
+├── data/
+│   └── products.json               # 12 sample products across 4 categories
+├── hooks/
+│   ├── use-cart.ts                 # Facade hook for cart operations
+│   ├── use-debounce.ts             # Debounce utility hook
+│   ├── use-local-storage.ts        # Persistent state hook
+│   └── use-media-query.ts          # Responsive breakpoint hook
+├── lib/
+│   ├── constants.ts                # Currency, shipping costs, limits
+│   ├── fetcher.ts                  # Type-safe fetch wrapper with FetchError
+│   ├── format.ts                   # Price formatter (cents -> currency)
+│   └── utils.ts                    # Class name merge utility (cn)
+├── providers/
+│   ├── cart-provider.tsx           # React Context for cart state & storage
+│   ├── index.tsx                   # Composed providers wrapper
+│   └── query-provider.tsx          # TanStack React Query provider
+├── repositories/
+│   ├── order.repository.ts         # In-memory order CRUD repository
+│   └── product.repository.ts       # Product querying repository
+└── types/
+    ├── cart.ts                     # CartItem & CartState types
+    ├── index.ts                    # Re-exports & generic API response types
+    ├── order.ts                    # Order, Customer, Shipping Zod schemas
+    └── product.ts                  # Product interface & Zod validation
 ```
 
 ---
 
-## 🛠️ Getting Started
+## 🚀 Getting Started
 
-### 1. Prerequisites
-- **Node.js**: `v20+` (v22 recommended)
-- **Package Manager**: `pnpm` (v10 recommended)
+### Prerequisites
+- **Node.js**: `v20+`
+- **pnpm**: `v10+` (or `npm`, `yarn`, `bun`)
 
-### 2. Installation
+### Installation
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone <repository-url>
 cd insta_hire_zetwork
 
-# Install dependencies
+# 2. Install dependencies
 pnpm install
-```
 
-### 3. Environment Setup
-```bash
+# 3. Set up environment variables
 cp .env.example .env.local
 ```
 
-### 4. Run Development Server
+### Run Development Server
 ```bash
-pnpm run dev
+pnpm dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
+Navigate to [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🧪 Available Scripts & Testing
+## 🧪 Testing & Quality Verification
 
 | Command | Description |
-| :--- | :--- |
-| `pnpm run dev` | Start development server with Turbopack |
-| `pnpm run build` | Create optimized production build |
-| `pnpm run start` | Start production server |
-| `pnpm run typecheck` | Run TypeScript compiler validation (`tsc --noEmit`) |
-| `pnpm run lint` | Run ESLint checks |
-| `pnpm run lint:fix` | Automatically fix ESLint warnings |
-| `pnpm run format` | Format code using Prettier with Tailwind class ordering |
-| `pnpm run test` | Run Unit & Component tests with Vitest |
-| `pnpm run test:watch` | Run Vitest in interactive watch mode |
-| `pnpm run test:coverage` | Generate code coverage report |
-| `pnpm run test:e2e` | Run Playwright End-to-End test suite |
-| `pnpm run test:e2e:ui` | Open interactive Playwright Test UI |
+|---|---|
+| `pnpm typecheck` | Run strict TypeScript compiler checks (`tsc --noEmit`) |
+| `pnpm lint` | Run ESLint across entire codebase |
+| `pnpm test` | Run unit & integration tests with Vitest |
+| `pnpm build` | Create production-ready Next.js build |
+| `pnpm start` | Run production server locally |
 
 ---
 
-## 🔒 Quality & CI Pipeline
+## 🔄 User Journey & Test Flow
 
-Every pull request and push to main runs our GitHub Actions workflow:
-1. **ESLint**: Static analysis & lint rules
-2. **TypeScript**: Strict typecheck
-3. **Vitest**: Unit & Component tests
-4. **Next.js Build**: Turbopack production compilation
+1. **Browse Catalog**: Open `/` to view 12 sample products across Electronics, Clothing, Books, and Home & Kitchen.
+2. **Search & Filter**: Click category pills (e.g., *Electronics*) or type a search keyword (e.g., *"keyboard"*) to observe instant debounced filtering.
+3. **Product Details**: Click on any product card to visit `/products/[slug]`. Verify full description, stock level, rating, and responsive image.
+4. **Add to Cart**: Click "Add to Cart" or use the quantity incrementor (`+`/`-`). Observe the header cart badge updating in real-time.
+5. **Manage Cart**: Navigate to `/cart`. Modify item quantities, remove line items with the trash icon, or clear the entire cart. Verify dynamic subtotal and shipping calculations (₹999+ orders receive free shipping).
+6. **Checkout**: Click "Proceed to Checkout" to navigate to `/checkout`.
+7. **Form Validation**: Click "Place Order" with empty inputs to see Zod validation errors trigger on required fields (email format, minimum lengths, zip code).
+8. **Place Order**: Complete the form with valid details and submit. The cart will clear and redirect to `/order-confirmation/[orderId]`.
+9. **Receipt Verification**: Confirm all ordered items, quantities, pricing breakdown, order ID, and shipping address are correctly displayed.
+
+---
+
+## 🚢 Deployment
+
+The project is configured with `vercel.json` for deployment on **Vercel**:
+
+```bash
+# Deploy with Vercel CLI
+vercel --prod
+```
+
+Or connect the GitHub repository to the [Vercel Dashboard](https://vercel.com/new).
