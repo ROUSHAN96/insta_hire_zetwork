@@ -138,7 +138,7 @@ export function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps
               <div className="pt-2 flex flex-col gap-1.5 text-xs text-muted-foreground border-t border-border/40">
                 <span className="flex items-center gap-2">
                   <Truck className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span>Free express shipping on orders over $50</span>
+                  <span>Free express shipping on orders over ₹999</span>
                 </span>
                 <span className="flex items-center gap-2">
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />

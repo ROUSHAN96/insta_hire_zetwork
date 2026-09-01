@@ -345,7 +345,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50 space-y-1">
                   <span className="font-bold text-foreground block">Express Delivery</span>
-                  <p className="text-xs">2-4 Business days. Free for orders over $50.</p>
+                  <p className="text-xs">2-4 Business days. Free for orders over ₹999.</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-secondary/50 border border-border/50 space-y-1">
                   <span className="font-bold text-foreground block">30-Day Money Back</span>

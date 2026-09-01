@@ -33,7 +33,7 @@ interface ProductListingProps {
 }
 
 type SortOption = 'featured' | 'price-asc' | 'price-desc' | 'rating-desc';
-type PriceFilter = 'all' | 'under-50' | '50-100' | 'over-100';
+type PriceFilter = 'all' | 'under-1000' | '1000-5000' | 'over-5000';
 
 export function ProductListing({ products, categories }: ProductListingProps) {
   const searchParams = useSearchParams();
@@ -86,11 +86,11 @@ export function ProductListing({ products, categories }: ProductListingProps) {
       // 2. Category
       const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
 
-      // 3. Price Filter (prices in cents/dollars)
+      // 3. Price Filter (in paise / INR)
       let matchesPrice = true;
-      if (priceFilter === 'under-50') matchesPrice = product.price < 5000;
-      else if (priceFilter === '50-100') matchesPrice = product.price >= 5000 && product.price <= 10000;
-      else if (priceFilter === 'over-100') matchesPrice = product.price > 10000;
+      if (priceFilter === 'under-1000') matchesPrice = product.price < 100000;
+      else if (priceFilter === '1000-5000') matchesPrice = product.price >= 100000 && product.price <= 500000;
+      else if (priceFilter === 'over-5000') matchesPrice = product.price > 500000;
 
       // 4. In-Stock Only
       const matchesStock = inStockOnly ? product.stock > 0 : true;
@@ -211,9 +211,9 @@ export function ProductListing({ products, categories }: ProductListingProps) {
             <div className="flex items-center bg-secondary/60 rounded-xl p-0.5 border border-border/40">
               {[
                 { label: 'All Prices', value: 'all' },
-                { label: '< $50', value: 'under-50' },
-                { label: '$50 - $100', value: '50-100' },
-                { label: '> $100', value: 'over-100' },
+                { label: '< ₹1,000', value: 'under-1000' },
+                { label: '₹1,000 - ₹5,000', value: '1000-5000' },
+                { label: '> ₹5,000', value: 'over-5000' },
               ].map((p) => (
                 <button
                   key={p.value}

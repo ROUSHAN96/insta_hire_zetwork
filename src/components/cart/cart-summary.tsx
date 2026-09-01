@@ -159,7 +159,7 @@ export function CartSummary() {
             href="/checkout"
             className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-950 text-white dark:bg-white dark:text-slate-950 font-bold text-xs hover:opacity-90 transition-opacity"
           >
-            <span> Pay</span>
+            <span>⚡ UPI / GPay</span>
           </Link>
           <Link
             href="/checkout"

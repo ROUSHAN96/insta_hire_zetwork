@@ -36,7 +36,7 @@ export function Header() {
 
   const announcements = [
     '⚡ FLASH SALE: Up to 40% Off Premium Electronics & Apparel — Limited Time Only',
-    '🚚 FREE Express Delivery on all orders over $50 + Instant 24h Dispatch',
+    '🚚 FREE Express Delivery across India on all orders over ₹999',
     '🛡️ 100% Genuine Certified Products • 30-Day Money-Back Guarantee',
   ];
 
@@ -74,11 +74,11 @@ export function Header() {
           {/* Left: Location & Hotline */}
           <div className="hidden lg:flex items-center gap-4 text-slate-300">
             <span className="flex items-center gap-1.5">
-              <MapPin className="h-3 w-3 text-emerald-400" /> Deliver to: <strong className="text-white">Global Express</strong>
+              <MapPin className="h-3 w-3 text-emerald-400" /> Deliver to: <strong className="text-white">India (All Pincodes)</strong>
             </span>
             <span className="opacity-30">|</span>
             <span className="flex items-center gap-1.5">
-              <Headphones className="h-3 w-3 text-primary" /> 24/7 Helpline: <strong className="text-white">+1 (800) 938-SHOP</strong>
+              <Headphones className="h-3 w-3 text-primary" /> 24/7 Helpline: <strong className="text-white">1800-123-SHOP</strong>
             </span>
           </div>
 
@@ -97,7 +97,7 @@ export function Header() {
             </span>
             <span className="opacity-30">|</span>
             <span className="text-[10px] font-semibold text-white bg-slate-800 px-1.5 py-0.5 rounded">
-              USD ($)
+              INR (₹)
             </span>
           </div>
         </div>
@@ -297,14 +297,14 @@ export function Header() {
               <div className="pt-3 mt-2 border-t border-border/60 flex flex-col gap-2 text-xs text-muted-foreground px-2">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-foreground font-semibold">
-                    <Truck className="h-3.5 w-3.5 text-primary" /> Free Express on $50+
+                    <Truck className="h-3.5 w-3.5 text-primary" /> Free Express on ₹999+
                   </span>
                   <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                     100% Genuine
                   </span>
                 </div>
                 <div className="text-[11px] text-muted-foreground pt-1">
-                  📞 24/7 Helpline: +1 (800) 938-SHOP
+                  📞 24/7 Helpline: 1800-123-SHOP
                 </div>
               </div>
             </nav>
