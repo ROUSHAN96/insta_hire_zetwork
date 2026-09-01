@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { PrismaClient } from "../src/generated/client";
+import { PrismaClient } from "@prisma/client";
 import productsData from "../src/data/products.json";
 import { PrismaPg } from "@prisma/adapter-pg";
 

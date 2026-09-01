@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { Layers, Laptop, Shirt, BookOpen, Home, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CategoryFilterProps {
@@ -9,41 +9,51 @@ interface CategoryFilterProps {
   onSelect: (category: string | null) => void;
 }
 
+const categoryIcons: Record<string, React.ElementType> = {
+  Electronics: Laptop,
+  Clothing: Shirt,
+  Books: BookOpen,
+  'Home & Kitchen': Home,
+};
+
 export function CategoryFilter({ categories, selected, onSelect }: CategoryFilterProps) {
   return (
-    <div className="flex w-full overflow-x-auto pb-2 scrollbar-hide">
-      <div className="flex space-x-2">
+    <div className="flex w-full overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={() => onSelect(null)}
-          className="focus:outline-none"
+          className={cn(
+            'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none',
+            selected === null
+              ? 'bg-primary text-primary-foreground shadow-sm scale-100 ring-2 ring-primary/20'
+              : 'bg-secondary/70 text-muted-foreground hover:text-foreground hover:bg-secondary border border-border/40 hover:scale-[1.02]'
+          )}
         >
-          <Badge
-            variant={selected === null ? 'default' : 'outline'}
-            className={cn(
-              'cursor-pointer whitespace-nowrap text-sm px-4 py-1.5 transition-colors',
-              selected === null ? '' : 'hover:bg-muted'
-            )}
-          >
-            All
-          </Badge>
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>All Items</span>
         </button>
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => onSelect(category)}
-            className="focus:outline-none"
-          >
-            <Badge
-              variant={selected === category ? 'default' : 'outline'}
+
+        {categories.map((category) => {
+          const Icon = categoryIcons[category] || Layers;
+          const isSelected = selected === category;
+          return (
+            <button
+              key={category}
+              type="button"
+              onClick={() => onSelect(category)}
               className={cn(
-                'cursor-pointer whitespace-nowrap text-sm px-4 py-1.5 transition-colors',
-                selected === category ? '' : 'hover:bg-muted'
+                'inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 cursor-pointer select-none',
+                isSelected
+                  ? 'bg-primary text-primary-foreground shadow-sm scale-100 ring-2 ring-primary/20'
+                  : 'bg-secondary/70 text-muted-foreground hover:text-foreground hover:bg-secondary border border-border/40 hover:scale-[1.02]'
               )}
             >
-              {category}
-            </Badge>
-          </button>
-        ))}
+              <Icon className="h-3.5 w-3.5" />
+              <span>{category}</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { OrderSummaryCard } from '@/components/checkout/order-summary-card';
@@ -52,7 +52,7 @@ export default function CheckoutPage() {
         clearCart();
         router.push(`/order-confirmation/${response.data.id}`);
       } else {
-        throw new Error('Failed to place order');
+        throw new Error('Failed to place order. Please check details and try again.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
@@ -62,29 +62,59 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <Link
-        href="/cart"
-        className={buttonVariants({ variant: 'ghost', className: 'mb-6 -ml-4' })}
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to cart
-      </Link>
+    <div className="min-h-screen pb-20">
+      <div className="container mx-auto max-w-7xl px-4 sm:px-8 pt-8">
+        {/* Navigation back */}
+        <Link
+          href="/cart"
+          className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'mb-6 -ml-2 rounded-xl text-muted-foreground hover:text-foreground' })}
+        >
+          <ArrowLeft className="mr-1.5 h-4 w-4" />
+          Back to cart
+        </Link>
 
-      <h1 className="text-3xl font-bold tracking-tight mb-8">Checkout</h1>
+        {/* Stepper Header */}
+        <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-border/50">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-primary">Final Step</span>
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground mt-0.5">
+              Secure Checkout
+            </h1>
+          </div>
 
-      {error && (
-        <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
-          {error}
+          {/* Steps Indicator */}
+          <div className="flex items-center gap-3 text-xs font-medium">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <span className="flex size-6 items-center justify-center rounded-full bg-secondary text-foreground text-[11px] font-bold">1</span>
+              <span>Cart</span>
+            </div>
+            <span className="h-px w-6 bg-border" />
+            <div className="flex items-center gap-1.5 text-foreground font-semibold">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-[11px] font-bold">2</span>
+              <span>Details & Shipping</span>
+            </div>
+            <span className="h-px w-6 bg-border" />
+            <div className="flex items-center gap-1.5 text-muted-foreground opacity-60">
+              <span className="flex size-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[11px]">3</span>
+              <span>Confirmation</span>
+            </div>
+          </div>
         </div>
-      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-7 xl:col-span-8">
-          <CheckoutForm onSubmit={onSubmit} isSubmitting={isSubmitting} />
-        </div>
-        <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
-          <OrderSummaryCard />
+        {error && (
+          <div className="mb-8 rounded-2xl border border-destructive/40 bg-destructive/10 p-4 text-sm text-destructive flex items-center gap-3">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <p className="font-medium">{error}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="lg:col-span-7 xl:col-span-8">
+            <CheckoutForm onSubmit={onSubmit} isSubmitting={isSubmitting} />
+          </div>
+          <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
+            <OrderSummaryCard />
+          </div>
         </div>
       </div>
     </div>
