@@ -27,7 +27,7 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7",
+    "@prisma/client": "7.10.0",
     "@tanstack/react-query": "^5.102.8",
     "@tanstack/react-query-devtools": "^5.102.8",
     "class-variance-authority": "^0.7.1",
@@ -35,6 +35,7 @@
     "dotenv": "^17.4.2",
     "lucide-react": "^1.39.0",
     "next": "16.3.4",
+    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "shadcn": "^4.19.1",
