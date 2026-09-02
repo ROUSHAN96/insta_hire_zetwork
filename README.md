@@ -1,6 +1,6 @@
 # 🛒 ShopZet — Production-Grade E-Commerce Cart & Checkout System
 
-A production-grade, full-featured e-commerce shopping cart and checkout web application built with **Next.js 16 (App Router)**, **React 19**, **TypeScript (Strict Mode)**, **Tailwind CSS v4**, and **shadcn/ui**.
+A production-grade, full-featured e-commerce shopping cart and checkout web application built with **Next.js 16 (App Router)**, **React 19**, **TypeScript (Strict Mode)**, **Tailwind CSS v4**, **shadcn/ui**, and backed by **PostgreSQL** with **Prisma ORM**.
 
 ---
 
@@ -47,7 +47,7 @@ A production-grade, full-featured e-commerce shopping cart and checkout web appl
 │       State Management      │ │          Data Layer         │
 │  - CartContext + Provider   │ │  - ProductRepository       │
 │  - useCart (Facade Hook)    │ │  - OrderRepository         │
-│  - LocalStorage Strategy    │ │  - In-Memory / JSON DB     │
+│  - LocalStorage Strategy    │ │  - Prisma ORM + PostgreSQL │
 └──────────────┬──────────────┘ └──────────────┬──────────────┘
                │                               │
 ┌──────────────▼───────────────────────────────▼──────────────┐
@@ -59,12 +59,12 @@ A production-grade, full-featured e-commerce shopping cart and checkout web appl
 
 | Pattern / Principle | Implementation in ShopZet |
 |---|---|
-| **Single Responsibility (SRP)** | Data repositories handle storage, contexts handle state synchronization, components render UI, and formatters handle data presentation. |
-| **Open/Closed (OCP)** | The `ProductRepository` and `OrderRepository` abstractions allow swapping in-memory data with PostgreSQL/Prisma or MongoDB without touching UI components. |
+| **Single Responsibility (SRP)** | Data repositories handle database queries via Prisma, contexts handle state synchronization, components render UI, and formatters handle data presentation. |
+| **Open/Closed (OCP)** | The `ProductRepository` and `OrderRepository` abstractions decouple database queries from business and presentation logic. |
 | **Liskov Substitution (LSP)** | Consistent domain interfaces (`Product`, `CartItem`, `Order`) ensure seamless composition across layers. |
 | **Interface Segregation (ISP)** | Clean, focused types for `CustomerInfo`, `ShippingAddress`, and `CartItem` rather than bloated all-in-one objects. |
-| **Dependency Inversion (DIP)** | Components and API routes depend on repository abstractions rather than direct file I/O or concrete storage mechanisms. |
-| **Repository Pattern** | `productRepository` and `orderRepository` encapsulate all data querying and persistence. |
+| **Dependency Inversion (DIP)** | Components and API routes depend on repository abstractions rather than direct database queries or raw SQL. |
+| **Repository Pattern** | `productRepository` and `orderRepository` encapsulate all database querying, filtering, and persistence via Prisma ORM. |
 | **Facade Pattern** | `useCart()` hook provides a simplified, ergonomic API concealing internal storage synchronization and reducer logic. |
 | **DRY Principle** | Reusable price formatting (`formatPrice`), date formatting (`formatDate`), debouncing (`useDebounce`), and shared Zod schemas between client and API routes. |
 
@@ -73,12 +73,18 @@ A production-grade, full-featured e-commerce shopping cart and checkout web appl
 ## 📁 Directory Structure
 
 ```
+prisma/
+├── migrations/                     # Prisma SQL migration history
+├── schema.prisma                   # Database models (Product, Order, OrderItem)
+└── seed.ts                         # PostgreSQL seed script (upsert from JSON)
 src/
 ├── app/
 │   ├── api/
+│   │   ├── health/
+│   │   │   └── route.ts            # API health check endpoint
 │   │   ├── orders/
 │   │   │   ├── [id]/route.ts       # GET order by ID
-│   │   │   └── route.ts            # POST create order
+│   │   │   └── route.ts            # POST create order & order items
 │   │   └── products/
 │   │       ├── [id]/route.ts       # GET product by ID
 │   │       └── route.ts            # GET all products (filter/search)
@@ -123,7 +129,7 @@ src/
 │   ├── env.ts                      # Validated environment variables
 │   └── site.ts                     # Store metadata & navigation config
 ├── data/
-│   └── products.json               # 12 sample products across 4 categories
+│   └── products.json               # Initial sample products catalog
 ├── hooks/
 │   ├── use-cart.ts                 # Facade hook for cart operations
 │   ├── use-debounce.ts             # Debounce utility hook
@@ -133,14 +139,15 @@ src/
 │   ├── constants.ts                # Currency, shipping costs, limits
 │   ├── fetcher.ts                  # Type-safe fetch wrapper with FetchError
 │   ├── format.ts                   # Price formatter (cents -> currency)
+│   ├── prisma.ts                   # PrismaClient singleton with adapter-pg
 │   └── utils.ts                    # Class name merge utility (cn)
 ├── providers/
 │   ├── cart-provider.tsx           # React Context for cart state & storage
 │   ├── index.tsx                   # Composed providers wrapper
 │   └── query-provider.tsx          # TanStack React Query provider
 ├── repositories/
-│   ├── order.repository.ts         # In-memory order CRUD repository
-│   └── product.repository.ts       # Product querying repository
+│   ├── order.repository.ts         # PostgreSQL order CRUD repository via Prisma
+│   └── product.repository.ts       # PostgreSQL product query repository via Prisma
 └── types/
     ├── cart.ts                     # CartItem & CartState types
     ├── index.ts                    # Re-exports & generic API response types
@@ -150,26 +157,64 @@ src/
 
 ---
 
+## 🗄️ Database Architecture & Persistence
+
+ShopZet uses **PostgreSQL** managed through **Prisma ORM** (`@prisma/client` and `@prisma/adapter-pg`).
+
+### Schema Models (`prisma/schema.prisma`)
+
+* **`Product`**: Stores product catalog information with prices in integer paise (e.g. `₹999.00` = `99900`), stock counts, categories, ratings, and image URLs. Indexed by `category` and `slug`.
+* **`Order`**: Captures customer contact details, structured shipping address, order timestamp, calculated grand total, and `OrderStatus` (`pending`, `confirmed`, `shipped`, `delivered`, `cancelled`). Indexed by `customerEmail`.
+* **`OrderItem`**: Relational join between orders and products capturing snapshot price and quantity at purchase time. Configured with cascade deletion on order delete.
+
+### Data Access Layer (Repository Pattern)
+
+All database operations are abstracted behind dedicated repository objects in `src/repositories/`:
+* **`productRepository`**: Handles `getAll()`, `getById()`, `getBySlug()`, `getByCategory()`, `search()`, and `getCategories()`.
+* **`orderRepository`**: Handles transactional order creation (`create()`), order lookup by ID (`getById()`), and customer order history (`getByEmail()`).
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 - **Node.js**: `v20+`
 - **pnpm**: `v10+` (or `npm`, `yarn`, `bun`)
+- **PostgreSQL**: Local PostgreSQL instance or cloud PostgreSQL (e.g. [Neon](https://neon.tech), Supabase)
 
-### Installation
+### 1. Clone the repository
 ```bash
-# 1. Clone the repository
 git clone <repository-url>
-cd insta_hire_zetwork
-
-# 2. Install dependencies
-pnpm install
-
-# 3. Set up environment variables
-cp .env.example .env.local
+cd insta_hire_zetwerk
 ```
 
-### Run Development Server
+### 2. Install dependencies
+```bash
+pnpm install
+```
+
+### 3. Set up environment variables
+```bash
+cp .env.example .env.local
+```
+Configure your `DATABASE_URL` in `.env.local`:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/insta_hire_zetwerk?schema=public"
+```
+
+### 4. Initialize & Seed Database
+```bash
+# Generate Prisma Client
+pnpm prisma:generate
+
+# Push schema to PostgreSQL (or run migrations with `pnpm db:migrate`)
+pnpm db:push
+
+# Seed catalog with initial product data
+pnpm db:seed
+```
+
+### 5. Run Development Server
 ```bash
 pnpm dev
 ```
@@ -177,15 +222,22 @@ Navigate to [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🧪 Testing & Quality Verification
+## 🧪 Available Scripts & Testing
 
 | Command | Description |
 |---|---|
-| `pnpm typecheck` | Run strict TypeScript compiler checks (`tsc --noEmit`) |
-| `pnpm lint` | Run ESLint across entire codebase |
-| `pnpm test` | Run unit & integration tests with Vitest |
+| `pnpm dev` | Start Next.js development server with hot-reloading |
 | `pnpm build` | Create production-ready Next.js build |
 | `pnpm start` | Run production server locally |
+| `pnpm typecheck` | Run strict TypeScript compiler checks (`tsc --noEmit`) |
+| `pnpm lint` | Run ESLint across entire codebase |
+| `pnpm lint:fix` | Automatically fix ESLint warnings and errors |
+| `pnpm test` | Run unit & integration tests with Vitest |
+| `pnpm prisma:generate` | Generate Prisma Client types from `prisma/schema.prisma` |
+| `pnpm db:push` | Push schema state directly to PostgreSQL database |
+| `pnpm db:migrate` | Create and apply database migrations (`prisma migrate dev`) |
+| `pnpm db:seed` | Seed PostgreSQL database with initial catalog products |
+| `pnpm db:studio` | Launch Prisma Studio GUI browser for database inspection |
 
 ---
 

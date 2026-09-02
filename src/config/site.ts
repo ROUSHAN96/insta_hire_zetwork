@@ -15,7 +15,7 @@ export const siteConfig = {
     },
   ],
   links: {
-    twitter: 'https://twitter.com/zetwork',
-    github: 'https://github.com/zetwork',
+    twitter: 'https://twitter.com/zetwerk',
+    github: 'https://github.com/zetwerk',
   },
 };

@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from '@/lib/constants';
 import { OrderConfirmationActions } from '@/components/checkout/order-confirmation-actions';
+import { OrderConfirmationToast } from '@/components/checkout/order-confirmation-toast';
 
 export default async function OrderConfirmationPage(props: PageProps<'/order-confirmation/[id]'>) {
   const { id } = await props.params;
@@ -39,6 +40,9 @@ export default async function OrderConfirmationPage(props: PageProps<'/order-con
 
   return (
     <div className="min-h-screen pb-20">
+      {/* Trigger single clean toast notification */}
+      <OrderConfirmationToast customerEmail={order.customer.email} />
+
       <div className="container mx-auto max-w-5xl px-4 sm:px-8 pt-10">
         {/* Celebration Header */}
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4 mb-10">

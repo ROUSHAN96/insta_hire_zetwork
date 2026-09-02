@@ -3,13 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, ShieldCheck, AlertCircle } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { OrderSummaryCard } from '@/components/checkout/order-summary-card';
 import { buttonVariants } from '@/components/ui/button';
 import { fetcher } from '@/lib/fetcher';
-import type { CheckoutFormData } from '@/types/order';
+import {
+  createOrderInputSchema,
+  type CheckoutFormData,
+  type CreateOrderInput,
+} from '@/types/order';
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from '@/lib/constants';
 
 export default function CheckoutPage() {
@@ -26,7 +30,7 @@ export default function CheckoutPage() {
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
   const total = subtotal + shipping;
 
-  // Redirect to cart if empty (after mount)
+  // Redirect to cart if empty (after mount and not actively submitting)
   if (hasMounted && items.length === 0 && !isSubmitting) {
     router.replace('/cart');
     return null;
@@ -35,17 +39,32 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutFormData) => {
     setIsSubmitting(true);
     setError(null);
-    try {
-      const payload = {
-        items,
-        customer: data.customer,
-        shippingAddress: data.shippingAddress,
-        totalPrice: total,
-      };
 
+    // Construct and validate complete order payload using Zod before submission
+    const rawPayload: CreateOrderInput = {
+      items,
+      customer: data.customer,
+      shippingAddress: data.shippingAddress,
+      totalPrice: total,
+      paymentMethod: data.paymentMethod || 'cod',
+    };
+
+    const validationResult = createOrderInputSchema.safeParse(rawPayload);
+
+    if (!validationResult.success) {
+      const firstIssue = validationResult.error.issues[0];
+      const errorMessage = firstIssue
+        ? `${firstIssue.path.join('.')}: ${firstIssue.message}`
+        : 'Validation failed. Please review your checkout information.';
+      setError(errorMessage);
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
       const response = await fetcher<{ success: boolean; data: { id: string } }>('/api/orders', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(validationResult.data),
       });
 
       if (response.success && response.data?.id) {
@@ -67,7 +86,11 @@ export default function CheckoutPage() {
         {/* Navigation back */}
         <Link
           href="/cart"
-          className={buttonVariants({ variant: 'ghost', size: 'sm', className: 'mb-6 -ml-2 rounded-xl text-muted-foreground hover:text-foreground' })}
+          className={buttonVariants({
+            variant: 'ghost',
+            size: 'sm',
+            className: 'mb-6 -ml-2 rounded-xl text-muted-foreground hover:text-foreground',
+          })}
         >
           <ArrowLeft className="mr-1.5 h-4 w-4" />
           Back to cart
@@ -85,17 +108,23 @@ export default function CheckoutPage() {
           {/* Steps Indicator */}
           <div className="flex items-center gap-3 text-xs font-medium">
             <div className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="flex size-6 items-center justify-center rounded-full bg-secondary text-foreground text-[11px] font-bold">1</span>
+              <span className="flex size-6 items-center justify-center rounded-full bg-secondary text-foreground text-[11px] font-bold">
+                1
+              </span>
               <span>Cart</span>
             </div>
             <span className="h-px w-6 bg-border" />
             <div className="flex items-center gap-1.5 text-foreground font-semibold">
-              <span className="flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-[11px] font-bold">2</span>
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground text-[11px] font-bold">
+                2
+              </span>
               <span>Details & Shipping</span>
             </div>
             <span className="h-px w-6 bg-border" />
             <div className="flex items-center gap-1.5 text-muted-foreground opacity-60">
-              <span className="flex size-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[11px]">3</span>
+              <span className="flex size-6 items-center justify-center rounded-full bg-muted text-muted-foreground text-[11px]">
+                3
+              </span>
               <span>Confirmation</span>
             </div>
           </div>
