@@ -9,6 +9,7 @@ import { CheckoutForm } from '@/components/checkout/checkout-form';
 import { OrderSummaryCard } from '@/components/checkout/order-summary-card';
 import { buttonVariants } from '@/components/ui/button';
 import { fetcher } from '@/lib/fetcher';
+import { useToast } from '@/hooks/use-toast';
 import {
   createOrderInputSchema,
   type CheckoutFormData,
@@ -18,6 +19,7 @@ import { FREE_SHIPPING_THRESHOLD, SHIPPING_COST } from '@/lib/constants';
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const toast = useToast();
   const { items, totalPrice: subtotal, clearCart } = useCart();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +70,10 @@ export default function CheckoutPage() {
       });
 
       if (response.success && response.data?.id) {
+        toast.success(
+          'Order Placed Successfully! 🎉',
+          `Order #${response.data.id.slice(0, 8)}... confirmed. Receipt sent to ${validationResult.data.customer.email}`
+        );
         clearCart();
         router.push(`/order-confirmation/${response.data.id}`);
       } else {
